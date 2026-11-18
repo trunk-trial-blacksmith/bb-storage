@@ -47,14 +47,14 @@
             {
               bazel_os: 'linux',
               cross_compile: false,
-              os: 'ubuntu-latest',
+              os: 'blacksmith-4vcpu-ubuntu-2404',
               platform_name: 'linux_amd64',
               upload: true,
             },
             {
               bazel_os: 'windows',
               cross_compile: false,
-              os: 'windows-latest',
+              os: 'blacksmith-4vcpu-windows-2025',
               platform_name: 'windows_amd64',
               upload: false,
             },
@@ -76,8 +76,8 @@
         },
         {
           name: 'Override .bazelrc',
-          // Use the D drive to improve performance.
-          run: 'echo "startup --output_base=D:/bazel_output" >> .bazelrc',
+          // Use the D drive to improve performance, when the runner has one.
+          run: 'if (Test-Path D:/) { echo "startup --output_base=D:/bazel_output" >> .bazelrc }',
           'if': "matrix.host.platform_name == 'windows_amd64'",
         },
       ] + std.flattenArrays([
@@ -149,7 +149,7 @@
       ),
     },
     [if doUpload then 'publish']: {
-      'runs-on': 'ubuntu-latest',
+      'runs-on': 'blacksmith-2vcpu-ubuntu-2404',
       name: 'publish',
       needs: ['build_and_test'],
       steps: [
@@ -203,7 +203,7 @@
       ],
     },
     lint: {
-      'runs-on': 'ubuntu-latest',
+      'runs-on': 'blacksmith-4vcpu-ubuntu-2404',
       name: 'lint',
       steps: [
         {
